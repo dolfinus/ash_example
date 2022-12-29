@@ -1,6 +1,9 @@
 defmodule HelpdeskWeb.Router do
   use HelpdeskWeb, :router
-  require AshJsonApi
+
+  import AshAdmin.Router
+
+  admin_browser_pipeline :browser
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -22,12 +25,6 @@ defmodule HelpdeskWeb.Router do
     plug :accepts, ["json"]
     plug :fetch_session
     plug HelpdeskWeb.Plugs.FakeUser
-  end
-
-  scope "/json_api" do
-    pipe_through(:api)
-
-    forward "/helpdesk", HelpdeskWeb.Plugs.TicketsApi
   end
 
   scope "/" do
@@ -69,6 +66,7 @@ defmodule HelpdeskWeb.Router do
     scope "/" do
       pipe_through :browser
       live_dashboard "/dashboard", metrics: HelpdeskWeb.Telemetry
+      ash_admin "/admin"
     end
   end
 end

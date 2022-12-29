@@ -2,10 +2,10 @@ defmodule Helpdesk.Tickets.Customer do
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
     authorizers: [
-      AshPolicyAuthorizer.Authorizer
+      Ash.Policy.Authorizer
     ],
     extensions: [
-      AshJsonApi.Resource
+      AshGraphql.Resource
     ]
 
   resource do
@@ -16,15 +16,8 @@ defmodule Helpdesk.Tickets.Customer do
     strategy :context
   end
 
-  json_api do
-    type "customer"
-
-    routes do
-      base "/customers"
-
-      get :read
-      index :read
-    end
+  graphql do
+    type :customer
   end
 
   postgres do
@@ -44,7 +37,9 @@ defmodule Helpdesk.Tickets.Customer do
   end
 
   actions do
-    read :read
+    read :read do
+      primary? true
+    end
   end
 
   attributes do
@@ -57,7 +52,7 @@ defmodule Helpdesk.Tickets.Customer do
 
   relationships do
     has_many :reported_tickets, Helpdesk.Tickets.Ticket do
-      destination_field :reporter_id
+      destination_attribute :reporter_id
     end
   end
 end

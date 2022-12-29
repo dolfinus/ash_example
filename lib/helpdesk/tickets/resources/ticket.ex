@@ -2,14 +2,13 @@ defmodule Helpdesk.Tickets.Ticket do
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
     authorizers: [
-      # AshPolicyAuthorizer.Authorizer
+      Ash.Policy.Authorizer
     ],
     notifiers: [
       Ash.Notifier.PubSub
     ],
     extensions: [
-      AshGraphql.Resource,
-      AshJsonApi.Resource
+      AshGraphql.Resource
     ]
 
   pub_sub do
@@ -29,7 +28,7 @@ defmodule Helpdesk.Tickets.Ticket do
 
     queries do
       get :get_ticket, :read
-      list :list_tickets, :read
+      list :list_tickets, :read, relay?: true
     end
 
     mutations do
@@ -39,41 +38,20 @@ defmodule Helpdesk.Tickets.Ticket do
     end
   end
 
-  json_api do
-    type "ticket"
-
-    routes do
-      base "/tickets"
-
-      get :read
-      index :reported, route: "/reported"
-
-      index :read
-
-      post :open, route: "/open"
-      patch :update
-      delete :destroy
+  policies do
+    bypass always() do
+      authorize_if actor_attribute_equals(:admin, true)
     end
 
-    includes [
-      :reporter
-    ]
+    policy action_type(:read) do
+      authorize_if actor_attribute_equals(:representative, true)
+      authorize_if relates_to_actor_via(:reporter)
+    end
+
+    policy changing_relationship(:reporter) do
+      authorize_if relating_to_actor(:reporter)
+    end
   end
-
-  # policies do
-  #   bypass always() do
-  #     authorize_if actor_attribute_equals(:admin, true)
-  #   end
-
-  #   policy action_type(:read) do
-  #     authorize_if actor_attribute_equals(:representative, true)
-  #     authorize_if relates_to_actor_via(:reporter)
-  #   end
-
-  #   policy changing_relationship(:reporter) do
-  #     authorize_if relating_to_actor(:reporter)
-  #   end
-  # end
 
   actions do
     read :reported do
@@ -89,18 +67,16 @@ defmodule Helpdesk.Tickets.Ticket do
 
     read :read do
       primary? true
-      pagination offset?: true, required?: false
+      pagination offset?: true, keyset?: true, required?: false
     end
 
     create :open do
-      accept [:subject, :reporter]
+      accept [:subject]
     end
 
     update :update, primary?: true
 
-    update :assign do
-      accept [:representative]
-    end
+    update :assign
 
     destroy :destroy
   end

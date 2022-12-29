@@ -2,8 +2,13 @@ defmodule Helpdesk.Accounts.Api do
   use Ash.Api,
     extensions: [
       AshJsonApi.Api,
-      AshGraphql.Api
+      AshGraphql.Api,
+      AshAdmin.Api
     ]
+
+  admin do
+    show? true
+  end
 
   graphql do
     authorize? true

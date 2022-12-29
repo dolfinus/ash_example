@@ -34,7 +34,7 @@
       "name": "reporter_id",
       "primary_key?": false,
       "references": {
-        "destination_field": "id",
+        "destination_attribute": "id",
         "multitenancy": {
           "attribute": null,
           "global": false,
@@ -51,7 +51,7 @@
       "name": "representative_id",
       "primary_key?": false,
       "references": {
-        "destination_field": "id",
+        "destination_attribute": "id",
         "multitenancy": {
           "attribute": null,
           "global": null,

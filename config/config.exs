@@ -11,6 +11,8 @@ config :helpdesk,
   ecto_repos: [Helpdesk.Repo],
   ash_apis: [Helpdesk.Accounts.Api, Helpdesk.Tickets.Api]
 
+  config :ash, :policies, show_policy_breakdowns?: true
+
 config :helpdesk, Helpdesk.Repo, migration_primary_key: [name: :id, type: :binary_id]
 
 # Configures the endpoint

@@ -22,7 +22,7 @@
       "name": "reporter_id",
       "primary_key?": false,
       "references": {
-        "destination_field": "id",
+        "destination_attribute": "id",
         "table": "users"
       },
       "type": "binary_id"
@@ -33,7 +33,7 @@
       "name": "representative_id",
       "primary_key?": false,
       "references": {
-        "destination_field": "id",
+        "destination_attribute": "id",
         "table": "users"
       },
       "type": "binary_id"

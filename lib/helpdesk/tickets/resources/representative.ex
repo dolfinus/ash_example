@@ -2,7 +2,7 @@ defmodule Helpdesk.Tickets.Representative do
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
     authorizers: [
-      AshPolicyAuthorizer.Authorizer
+      Ash.Policy.Authorizer
     ],
     extensions: [
       AshJsonApi.Resource,
@@ -29,18 +29,6 @@ defmodule Helpdesk.Tickets.Representative do
     queries do
       get :get_representative, :read
       list :list_representatives, :read
-    end
-  end
-
-  json_api do
-    type "representative"
-
-    routes do
-      base "/representatives"
-
-      get :me, route: "/me"
-      get :read
-      index :read
     end
   end
 
@@ -83,7 +71,7 @@ defmodule Helpdesk.Tickets.Representative do
 
   relationships do
     has_many :assigned_tickets, Helpdesk.Tickets.Ticket do
-      destination_field :representative_id
+      destination_attribute :representative_id
     end
   end
 end
